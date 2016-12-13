@@ -31,15 +31,11 @@ ee.on('@all', function(client,string) {
 
 // TODO nickname
 ee.on('@nickname', function(client, string) {
-  // slice string to get new nickname
-  // add that nickname to their index # in the client pool array
   let newNickname = string.split(' ').shift().trim();
-  // let newNickname = string.split(' ').slice(1).join(' ').trim(); // no
-  console.log('This is a test of the nickname changing feature. New nickname is: ', newNickname);
-  // let tempthing = string.split(' ').shift().trim();
-  // let newNickname = string.split(' ').slice(1).join(' ').trim();
-  // console.log('New nickname is: ', newNickname);
-  // console.log('string is: ', string);
+  client.nickname = newNickname;
+  console.log('User entered new chosen name: ', newNickname);
+  console.log(`User client.nickname is: ${client.nickname}`);
+  console.log('User client.id is: ', client.id);
 });
 
 // TODO socket.destroy
