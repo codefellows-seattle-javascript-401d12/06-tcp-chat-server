@@ -75,7 +75,7 @@ server.on('connection', function(socket) {
 
   client.socket.write(`\r\nConnected as ${client.nickname}. Use @help for a list of commands.\r\r\n\n`);
 
-  console.log(`New user connected: ${client.id}\r\r\n\n`);
+  console.log(`New user connected: ${client.id}\r\n`);
 
   socket.on('error', function(err) {
     console.log(err);
