@@ -60,13 +60,11 @@ server.on('connection', function(socket) {
 
   console.log(`New user connected: ${client.id}\r\n`);
 
-  socket.on('close', function(user) {
-    connectedClients.forEach(function(client, index) {
-      if (client.id === user.id) {
-        connectedClients.splice(index, 1);
-        client.socket.write('Disconnecting from server.\r\n');
-        client.socket.destroy();
-      }
+  socket.on('close', function(err) {
+    if (err) console.log(err);
+    connectedClients.forEach(function(client) {
+      client.socket.write('Disconnecting from server.\r\n');
+      client.socket.destroy();
     });
   });
 
