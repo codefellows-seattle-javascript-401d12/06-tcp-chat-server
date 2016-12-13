@@ -26,7 +26,16 @@ ee.on('@nickname', function(user, data) {
   user.nickname = newNick;
 });
 
+ee.on('@pm', function(user, data) {
+  var message = getMessage(data);
+  var targetUser = data.split(' ').shift().trim();
 
+  connectedClients.forEach(function(client) {
+    if (client.nickname === targetUser || client.id === targetUser) {
+      client.socket.write(`${user.nickname} says privately: ${message}`);
+    }
+  });
+});
 
 server.on('connection', function(socket) {
   const client = new Client(socket);
