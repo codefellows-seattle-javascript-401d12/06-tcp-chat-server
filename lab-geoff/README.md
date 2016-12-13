@@ -13,7 +13,7 @@ This project is a simple chat server app that allows telnet clients to connect a
 
 # Command API
 - `@nick <nickname>`
--- Set's your nickname that other people see
+-- Sets your nickname that other people see
 - `@dm <nickname> <message>`
 -- Send message to *ONLY* the client with nickname
 - `@who`
