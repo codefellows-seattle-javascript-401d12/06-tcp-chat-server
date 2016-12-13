@@ -62,14 +62,12 @@ server.on('connection', function(socket) {
   socket.on('error', function(err) {
     console.log(err);
   });
-  socket.on('close', function() {
+  socket.on('close', function(c) {
+    if (client.nickname === c.nickname) {
+      users.splice(users.indexOf(c, 1));
+    }
     users.forEach( c => {
-      if (client.nickname === c.nickname) {
-        users.splice(users.indexOf(c, 1));
-      }
-      users.forEach( c => {
-        c.socket.write(`${client.nickname} has left.\n`);
-      });
+      c.socket.write(`${client.nickname} has left.\n`);
     });
     console.log(`${client.nickname} closed connection`);
   });
