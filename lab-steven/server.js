@@ -45,6 +45,10 @@ ee.on('@help', function(user) {
     '@exit: Disconnect from the server.');
 });
 
+ee.on('@exit', function(user) {
+  user.socket.emit('close');
+});
+
 ee.on('default', function(client) {
   client.socket.write('You must use a correct @ command. Use @help to see a list of commands.');
 });
