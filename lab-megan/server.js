@@ -23,15 +23,22 @@ ee.on('@dm', function(client, string) {
   });
 });
 
-ee.on('@nickname', function(client, newNickname) {
-  // slice string to get new nickname
-  // add that nickname
-});
-
 ee.on('@all', function(client,string) {
   pool.forEach (c => {
     c.socket.write(`${client.nickname}: ${string}`);
   });
+});
+
+// TODO nickname
+ee.on('@nickname', function(client, newNickname) {
+  // slice string to get new nickname
+  // add that nickname to their index # in the client pool array
+});
+
+// TODO socket.destroy
+ee.on('@destroy', function() {
+  // this will automatically throw an error
+  // do we need to do anything more here?
 });
 
 ee.on('default', function(client, string) {
@@ -54,6 +61,21 @@ server.on('connection', function(socket) {
 
     ee.emit('default', client, data.toString());
   });
+
+  // TODO socket error
+  socket.on('error', function(err) {
+    // log the error to the server
+    // send to the terminal window acting as the server
+    // NOTE add @ command to trigger socket.destroy to throw an error
+  });
+
+  // TODO socket close
+  socket.on('close', function(closed) {
+    // remove the user nickname from the pool
+    // will I have access to the pool[i] number for that?
+    // let's find out
+  });
+
 });
 
 server.listen(PORT, function() {
