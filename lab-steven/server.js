@@ -37,6 +37,18 @@ ee.on('@pm', function(user, data) {
   });
 });
 
+ee.on('@help', function(user) {
+  user.socket.write('List of commands:\r\n' +
+    '@all: Sends a message to all connected users.\r\n' +
+    '@nickname: Change your nickname.\r\n' +
+    '@pm <user>: Send a private message to a user.\r\n' +
+    '@exit: Disconnect from the server.');
+});
+
+ee.on('default', function(client) {
+  client.socket.write('You must use a correct @ command. Use @help to see a list of commands.');
+});
+
 server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
