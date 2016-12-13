@@ -26,6 +26,7 @@ ee.on('@pm', function(user, data) {
 
   connectedClients.forEach(function(client) {
     if (client.nickname === targetUser || client.id === targetUser) {
+      user.socket.write(`To ${client.nickname}: ${message}\r\r\n\n`);
       client.socket.write(`${user.nickname} says privately: ${message}\r\r\n\n`);
     }
   });
