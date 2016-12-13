@@ -5,6 +5,4 @@ This is a program that will allow terminals to communicate with each other throu
 
 Clone down this repository, then navigate to the ```lab-steven``` directory and run ```npm i```. Then, from the ```lab-steven``` directory, run ```node server.js```. This will startup your chat server and you will see the message: ```"Server started on port <port#>"```.
 
-Other users may now connect to your server through telnet. You can test this on your own machine by opening up new terminal windows, then entering the command ```telnet 127.0.0.1 <port>```. You may run ```@help``` while connected to get a list of acceptable commands while chatting.
-
-To find your IP address for other users to connect to your machine, Google ```"What's my IP address"```.
+Other users may now connect to your server through telnet. You can test this on your own machine by opening up new terminal windows, then entering the command ```telnet 127.0.0.1 <port>```. Alternatively, you can run ```telnet localhost <port>```. You may run ```@help``` while connected to get a list of acceptable commands while chatting.
