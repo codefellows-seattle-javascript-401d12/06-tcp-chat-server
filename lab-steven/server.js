@@ -9,6 +9,14 @@ const ee = new EE();
 
 const connectedClients = [];
 
+ee.on('@all', function(user, data) {
+  var message = data.split(' ').slice(1).join(' ').trim();
+
+  connectedClients.forEach(function(client) {
+    client.socket.write(`${user.nickname}: ${message}`);
+  });
+});
+
 server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
