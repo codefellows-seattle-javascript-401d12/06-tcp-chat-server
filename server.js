@@ -40,9 +40,12 @@ ee.on('@all', function(client, string) {
   });
 });
 
-// ee.on('close', function(client) {
-//
-// })
+ee.on('@help', function(client, string) {
+  client.socket.write('Commands:\n' +
+  '@nickname - set your nickname\n' +
+  '@dm - send user direct message\n' +
+  '@all - send all users message\n');
+});
 
 server.on('connection', function(socket) {
   var client = new Client(socket);
@@ -63,7 +66,6 @@ server.on('connection', function(socket) {
     users.forEach( c => {
       if (client.nickname === c.nickname) {
         users.splice(users.indexOf(c, 1));
-        console.log('updated users:', users);
       }
       users.forEach( c => {
         c.socket.write(`${client.nickname} has left.\n`);
@@ -76,5 +78,3 @@ server.on('connection', function(socket) {
 server.listen(PORT, function() {
   console.log(`PORT:${PORT} running`);
 });
-
-// server.close()
