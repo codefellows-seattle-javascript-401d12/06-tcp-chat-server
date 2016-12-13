@@ -25,5 +25,8 @@
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
     "gulp-mocha": "^3.0.1"
+  },
+  "dependencies": {
+    "node-uuid": "^1.4.7"
   }
 }
