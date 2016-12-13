@@ -68,6 +68,10 @@ server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
 
+  connectedClients.forEach(function(user) {
+    user.socket.write(`New user connected with nickname ${user.nickname}.\r\n`);
+  });
+
   client.socket.write(`\r\nConnected as ${client.nickname}. Use @help for a list of commands.\r\n`);
 
   console.log(`New user connected: ${client.id}\r\n`);
