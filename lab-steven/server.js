@@ -11,13 +11,13 @@ const connectedClients = [];
 
 ee.on('@all', function(user, data) {
   connectedClients.forEach(function(client) {
-    client.socket.write(`${user.nickname}: ${data}`);
+    client.socket.write(`${user.nickname}: ${data}\r\n`);
   });
 });
 
 ee.on('@nickname', function(user, data) {
   user.nickname = data.trim();
-  user.socket.write(`Changed nickname to ${data}`);
+  user.socket.write(`Changed nickname to ${data}\r\n`);
 });
 
 ee.on('@pm', function(user, data) {
