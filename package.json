@@ -1,0 +1,24 @@
+{
+  "name": "06-tcp-chat-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kcirekcom/06-tcp-chat-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kcirekcom/06-tcp-chat-server/issues"
+  },
+  "homepage": "https://github.com/kcirekcom/06-tcp-chat-server#readme",
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  }
+}
