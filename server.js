@@ -61,6 +61,7 @@ server.on('connection', (socket) => {
   });
 
   socket.on('error', err => {
+    ee.emit('userConnection');
     throw err;
   });
 
