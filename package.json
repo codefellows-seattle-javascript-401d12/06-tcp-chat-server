@@ -20,5 +20,12 @@
   "homepage": "https://github.com/kcirekcom/06-tcp-chat-server#readme",
   "dependencies": {
     "node-uuid": "^1.4.7"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.2.0"
   }
 }
