@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/maschigokae/06-tcp-chat-server/issues"
   },
-  "homepage": "https://github.com/maschigokae/06-tcp-chat-server#readme"
+  "homepage": "https://github.com/maschigokae/06-tcp-chat-server#readme",
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  }
 }
