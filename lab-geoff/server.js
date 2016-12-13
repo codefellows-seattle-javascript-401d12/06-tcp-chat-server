@@ -13,6 +13,19 @@ const ee = new EE();
 
 const pool = [];
 
+server.on('error', function(err) {
+  console.log('server on(error):', err);
+});
+
+/*
+"Note that if connections exist, this event is not emitted until all connections are ended."
+--From the Node.js docs
+*/
+server.on('close', function() {
+  //NOTE: Terminating the node process does not lead to here.
+  console.log('server on(close)');
+});
+
 server.on('connection', function(socket) {
   var client = new Client(socket);
   console.log('connection:', client.nickname, client.id);
@@ -32,18 +45,33 @@ server.on('connection', function(socket) {
 
   socket.on('close', function(err) {
     if(err) console.log(err); //TODO: Something other than console.log
-    console.log('You close...hmmm...but who gone?');
-    //TODO: Seriously cannot think of how to figure out which client disconnected.
+    var index = pool.indexOf(client);
+    // if(index == -1) //This is a weird case, right? Maybe not possible.
+
+    //TODO: What might cause splice(index, 1) to fail?
+    // var gone = pool.splice(index, 1);
+    pool.splice(index, 1);
+
+    //tODO: Verify if next line throws exception (for writing to a socket that might be closed already)
+    //  It does throw an exception.
+    // gone.socket.write(`good bye ${gone.nickname}`);
+
+    // I'm using Array.prototype.map to just print out the list of nicknames,
+    //  rather than the array of client objects, which have a bunch of junk
+    //   we really don't need to see logged. Plus, I never used map() much before
+    //    and now I'm gonna be mappin all over the place.
+    console.log('Pool after hang-up:',pool.map(function(c) {
+      return c.nickname;
+    }));
+    pool.forEach( c => {
+      c.socket.write(`${client.nickname} left the conversation\n`);
+    });
   });
 
-  socket.on('error', function(err, data) {
-    //TODO: What should we do on an error?
+  socket.on('error', function(err) {
+    console.log(err);
   });
 });
-
-// ee.on('default', function(client, string) {
-//   //Send the message to everyone
-// });
 
 ee.on('@all', function(client, string) {
   pool.forEach( c => {
@@ -51,11 +79,23 @@ ee.on('@all', function(client, string) {
   });
 });
 
+ee.on('@who', function(client) {
+  client.socket.write('Currently on the chat:\n');
+  pool.forEach( c => {
+    client.socket.write(` * ${c.nickname}\n`);
+  });
+});
+
+ee.on('@help', function(client) {
+  client.socket.write('You want help, eh? Take off you hoser.\n');
+});
+
 ee.on('@quit', handleQuit);
 ee.on('@exit', handleQuit);
 
-function handleQuit(client) {
+function handleQuit(client, msg) {
   //TODO: Disconnect the client and remove from the pool.
+  console.log('handleQuit', client.nickname, msg);
 }
 
 ee.on('@nick', function(client, string) {
@@ -71,7 +111,7 @@ ee.on('@dm', function(client, string) {
 
   pool.forEach( c => {
     if(c.nickname === nickname) {
-      c.socket.write(`${client.nickname}: ${message}`);
+      c.socket.write(`${client.nickname} sent you a private msg: ${message}\n`);
     }
   });
 });
@@ -82,4 +122,12 @@ ee.on('@dm', function(client, string) {
 
 server.listen(PORT, function() {
   console.log(`server up: ${PORT}`);
+});
+
+
+ee.on('@poker', function(client) {
+  pool.forEach( c => {
+    c.socket.write(`${client.nickname}: ANTE UP MOFOS!\n`);
+    //TODO: Play POKER!
+  });
 });
