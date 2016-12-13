@@ -24,12 +24,16 @@ ee.on('@pm', function(user, data) {
   var message = data.split(' ').slice(1).join(' ').trim();
   var targetUser = data.split(' ').shift().trim();
 
-  connectedClients.forEach(function(client) {
-    if (client.nickname === targetUser || client.id === targetUser) {
-      user.socket.write(`To ${client.nickname}: ${message}\r\r\n\n`);
-      client.socket.write(`${user.nickname} says privately: ${message}\r\r\n\n`);
-    }
-  });
+  var foundUser = connectedClients.filter(function(client) {
+    return (client.nickname === targetUser || client.id === targetUser);
+  })[0];
+
+  if (foundUser) {
+    user.socket.write(`To ${foundUser.nickname}: ${message}\r\r\n\n`);
+    foundUser.socket.write(`${foundUser.nickname} says privately: ${message}\r\r\n\n`);
+    return;
+  }
+  user.socket.write('No user exists with that nickname or ID.\r\r\n\n');
 });
 
 ee.on('@list', function(user) {
@@ -70,7 +74,7 @@ server.on('connection', function(socket) {
   connectedClients.push(client);
 
   connectedClients.forEach(function(user) {
-    user.socket.write(`New user connected with nickname ${user.nickname}.\r\r\n\n`);
+    user.socket.write(`New user connected with nickname ${client.nickname}.\r\r\n\n`);
   });
 
   client.socket.write(`\r\nConnected as ${client.nickname}. Use @help for a list of commands.\r\r\n\n`);
