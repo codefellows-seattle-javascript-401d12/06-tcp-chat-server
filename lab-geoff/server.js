@@ -46,11 +46,17 @@ server.on('connection', function(socket) {
   socket.on('close', function(err) {
     if(err) console.log(err); //TODO: Something other than console.log
     var index = pool.indexOf(client);
-    // if(index == -1) //This is a weird case, right? Maybe not possible.
 
-    //TODO: What might cause splice(index, 1) to fail?
+    //Only splice if the client is in the pool.
+    //This can happen if the client got here as a result of
+    // @quit/@exit, because we remove them from the pool there.
+    //TODO: Possibly merge the socket.on(close) handler with handleQuit.
+    if(index !== -1) {
+      pool.splice(index, 1);
+    }
+
     // var gone = pool.splice(index, 1);
-    pool.splice(index, 1);
+    console.log('Lost connection with:',client.nickname);
 
     //tODO: Verify if next line throws exception (for writing to a socket that might be closed already)
     //  It does throw an exception.
@@ -64,7 +70,7 @@ server.on('connection', function(socket) {
       return c.nickname;
     }));
     pool.forEach( c => {
-      c.socket.write(`${client.nickname} left the conversation\n`);
+      c.socket.write(`${client.nickname} hung-up on the conversation\n`);
     });
   });
 
@@ -96,6 +102,22 @@ ee.on('@exit', handleQuit);
 function handleQuit(client, msg) {
   //TODO: Disconnect the client and remove from the pool.
   console.log('handleQuit', client.nickname, msg);
+  var index = pool.indexOf(client);
+  //TODO: Can index be -1 here?
+  if(index !== -1) {
+    //This is a little redundant with the on(close) handler
+    //Probably want to refactor to merge the two into one function
+    pool.splice(index, 1);
+  }
+  // var gone = pool.splice(index, 1).shift(); //splice returns an array
+
+  client.socket.write(`See ya later ${client.nickname}\n`);
+  console.log('Terminating connection with:',client.nickname);
+  client.socket.end(); //Will call close too -> YES it does
+
+  pool.forEach( c => {
+    c.socket.write(`${client.nickname} quit the conversation\n`);
+  });
 }
 
 ee.on('@nick', function(client, string) {
