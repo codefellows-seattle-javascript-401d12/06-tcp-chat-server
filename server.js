@@ -8,3 +8,7 @@ const server = net.createServer();
 const ee = new EE();
 
 const pool = [];
+
+server.listen(PORT, function() {
+  console.log(`server up: ${PORT}`);
+});
