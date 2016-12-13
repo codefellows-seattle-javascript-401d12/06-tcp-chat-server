@@ -9,3 +9,7 @@ const Client = module.exports = function(socket) {
 };
 
 //Methods for Client.prototype?
+// Client.prototype.send(msg) {
+//   //TODO: Try to send the msg, if fail, then what?
+//   //TODO: return SUCCESS | FAIL -> Error('something bad happened')
+// }
