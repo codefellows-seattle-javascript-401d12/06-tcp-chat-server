@@ -30,6 +30,12 @@ server.on('connection', function(socket) {
     ee.emit('@all', client, data.toString());
   });
 
+  socket.on('close', function(err) {
+    if(err) console.log(err); //TODO: Something other than console.log
+    console.log('You close...hmmm...but who gone?');
+    //TODO: Seriously cannot think of how to figure out which client disconnected.
+  });
+
   socket.on('error', function(err, data) {
     //TODO: What should we do on an error?
   });
