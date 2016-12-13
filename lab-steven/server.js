@@ -9,13 +9,24 @@ const ee = new EE();
 
 const connectedClients = [];
 
+const getMessage = function(data) {
+  return data.split(' ').slice(1).join(' ').trim();
+};
+
 ee.on('@all', function(user, data) {
-  var message = data.split(' ').slice(1).join(' ').trim();
+  var message = getMessage(data);
 
   connectedClients.forEach(function(client) {
     client.socket.write(`${user.nickname}: ${message}`);
   });
 });
+
+ee.on('@nickname', function(user, data) {
+  var newNick = getMessage(data);
+  user.nickname = newNick;
+});
+
+
 
 server.on('connection', function(socket) {
   const client = new Client(socket);
