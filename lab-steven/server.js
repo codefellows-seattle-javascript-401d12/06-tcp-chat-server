@@ -9,26 +9,19 @@ const ee = new EE();
 
 const connectedClients = [];
 
-const getMessage = function(data) {
-  return data.split(' ').slice(1).join(' ').trim();
-};
-
 ee.on('@all', function(user, data) {
-  var message = getMessage(data);
-
   connectedClients.forEach(function(client) {
-    client.socket.write(`${user.nickname}: ${message}\r\n`);
+    client.socket.write(`${user.nickname}: ${data}`);
   });
 });
 
 ee.on('@nickname', function(user, data) {
-  var newNick = getMessage(data);
-  user.nickname = newNick;
-  user.socket.write(`Changed nickname to ${newNick}`);
+  user.nickname = data.trim();
+  user.socket.write(`Changed nickname to ${data}`);
 });
 
 ee.on('@pm', function(user, data) {
-  var message = getMessage(data);
+  var message = data.split(' ').slice(1).join(' ').trim();
   var targetUser = data.split(' ').shift().trim();
 
   connectedClients.forEach(function(client) {
@@ -60,6 +53,8 @@ ee.on('default', function(client) {
 server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
+
+  client.socket.write(`Connected as ${client.nickname}. Use @help for a list of commands.`);
 
   console.log(`New user connected: ${client.id}\r\n`);
 
