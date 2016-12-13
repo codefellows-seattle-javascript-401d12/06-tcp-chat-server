@@ -17,13 +17,14 @@ ee.on('@all', function(user, data) {
   var message = getMessage(data);
 
   connectedClients.forEach(function(client) {
-    client.socket.write(`${user.nickname}: ${message}`);
+    client.socket.write(`${user.nickname}: ${message}\r\n`);
   });
 });
 
 ee.on('@nickname', function(user, data) {
   var newNick = getMessage(data);
   user.nickname = newNick;
+  user.socket.write(`Changed nickname to ${newNick}`);
 });
 
 ee.on('@pm', function(user, data) {
@@ -32,7 +33,7 @@ ee.on('@pm', function(user, data) {
 
   connectedClients.forEach(function(client) {
     if (client.nickname === targetUser || client.id === targetUser) {
-      client.socket.write(`${user.nickname} says privately: ${message}`);
+      client.socket.write(`${user.nickname} says privately: ${message}\r\n`);
     }
   });
 });
@@ -42,7 +43,7 @@ ee.on('@help', function(user) {
     '@all: Sends a message to all connected users.\r\n' +
     '@nickname: Change your nickname.\r\n' +
     '@pm <user>: Send a private message to a user.\r\n' +
-    '@exit: Disconnect from the server.');
+    '@exit: Disconnect from the server.\r\n');
 });
 
 ee.on('@exit', function(user) {
@@ -50,18 +51,20 @@ ee.on('@exit', function(user) {
 });
 
 ee.on('default', function(client) {
-  client.socket.write('You must use a correct @ command. Use @help to see a list of commands.');
+  client.socket.write('You must use a correct @ command. Use @help to see a list of commands.\r\n');
 });
 
 server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
 
+  console.log(`New user connected: ${client.id}\r\n`);
+
   socket.on('close', function(user) {
     connectedClients.forEach(function(client, index) {
       if (client.id === user.id) {
         connectedClients.splice(index, 1);
-        client.socket.write('Disconnecting from server.');
+        client.socket.write('Disconnecting from server.\r\n');
         client.socket.destroy();
       }
     });
@@ -73,6 +76,8 @@ server.on('connection', function(socket) {
 
   socket.on('data', function(data) {
     const message = data.toString().split(' ').shift().trim();
+
+    console.log(data);
 
     if (message.startsWith('@')) {
       ee.emit(message, client, data.toString().split(' ').slice(1).join(' '));
