@@ -26,6 +26,17 @@ server.on('connection', function(socket) {
   socket.on('error', function(err) {
     console.log(err);
   });
+
+  socket.on('data', function(data) {
+    const message = data.toString().split(' ').shift().trim();
+
+    if (message.startsWith('@')) {
+      ee.emit(message, client, data.toString().split(' ').slice(1).join(' '));
+      return;
+    }
+
+    ee.emit('default', client, data.toString());
+  });
 });
 
 server.listen(PORT, function() {
