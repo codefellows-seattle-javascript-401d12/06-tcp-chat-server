@@ -13,12 +13,12 @@ server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
 
-  socket.on('close', function(user, socket) {
+  socket.on('close', function(user) {
     connectedClients.forEach(function(client, index) {
       if (client.id === user.id) {
         connectedClients.splice(index, 1);
         client.socket.write('Disconnecting from server.');
-        socket.end();
+        client.socket.destroy();
       }
     });
   });
