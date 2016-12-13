@@ -11,7 +11,7 @@
 
 ## Include
 * `.gitignore`
-* `.eslint`
+* `.eslintrc`
 * `package.json`
 * `gulpfile.js`
 * `README.md`
