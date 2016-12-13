@@ -31,11 +31,25 @@ ee.on('@pm', function(user, data) {
   });
 });
 
+ee.on('@list', function(user) {
+  var placeHolder;
+  user.socket.write('Users currently connected:\r\n');
+  connectedClients.forEach(function(client) {
+    if (client.nickname === user.nickname) {
+      placeHolder = user.nickname;
+      user.nickname += ' (you)';
+    }
+    user.socket.write(`${client.nickname}\r\n`);
+  });
+  user.nickname = placeHolder;
+});
+
 ee.on('@help', function(user) {
   user.socket.write('List of commands:\r\n' +
     '@all: Sends a message to all connected users.\r\n' +
     '@nickname: Change your nickname.\r\n' +
     '@pm <user>: Send a private message to a user.\r\n' +
+    '@list: List of all currently connected users.\r\n' +
     '@exit: Disconnect from the server.\r\n');
 });
 
@@ -54,7 +68,7 @@ server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
 
-  client.socket.write(`Connected as ${client.nickname}. Use @help for a list of commands.`);
+  client.socket.write(`\r\nConnected as ${client.nickname}. Use @help for a list of commands.\r\n`);
 
   console.log(`New user connected: ${client.id}\r\n`);
 
