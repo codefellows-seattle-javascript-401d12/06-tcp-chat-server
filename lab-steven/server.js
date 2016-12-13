@@ -47,7 +47,10 @@ ee.on('@help', function(user) {
 });
 
 ee.on('@exit', function(user) {
-  user.socket.emit('close');
+  connectedClients.forEach(function(client) {
+    if (client.id === user.id) client.socket.write('Disconnecting from server.\r\n');
+  });
+  user.socket.emit('close', user.nickname);
 });
 
 ee.on('default', function(client) {
@@ -60,16 +63,14 @@ server.on('connection', function(socket) {
 
   console.log(`New user connected: ${client.id}\r\n`);
 
-  socket.on('close', function(err) {
-    if (err) console.log(err);
-    connectedClients.forEach(function(client) {
-      client.socket.write('Disconnecting from server.\r\n');
-      client.socket.destroy();
-    });
-  });
-
   socket.on('error', function(err) {
     console.log(err);
+  });
+
+  socket.on('close', function(user) {
+    connectedClients.forEach(function(person) {
+      person.socket.write(`${user.nickname} disconnected.`);
+    });
   });
 
   socket.on('data', function(data) {
