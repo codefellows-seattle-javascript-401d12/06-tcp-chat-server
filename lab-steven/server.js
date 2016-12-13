@@ -12,6 +12,16 @@ const connectedClients = [];
 server.on('connection', function(socket) {
   const client = new Client(socket);
   connectedClients.push(client);
+
+  socket.on('close', function(user, socket) {
+    connectedClients.forEach(function(client, index) {
+      if (client.id === user.id) {
+        connectedClients.splice(index, 1);
+        client.socket.write('Disconnecting from server.');
+        socket.end();
+      }
+    });
+  });
 });
 
 server.listen(PORT, function() {
