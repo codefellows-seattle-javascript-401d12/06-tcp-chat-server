@@ -1,0 +1,16 @@
+{
+  "name": "tcp-server",
+  "version": "1.0.0",
+  "description": "Creating a TCP chat server.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "brittdawndev@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  }
+}
