@@ -1,0 +1,21 @@
+{
+  "name": "TCPchatServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-uuid": "^1.4.7"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1",
+    "nodemon": "^1.11.0"
+  }
+}
