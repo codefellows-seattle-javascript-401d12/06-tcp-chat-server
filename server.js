@@ -7,15 +7,6 @@ const PORT = process.env.PORT || 8000;
 const server = net.createServer();
 const ee = new EE();
 
-const chatters = [];
-
 server.listen(PORT, function() {
   console.log(`Server running on port ${PORT}.`);
-});
-
-server.on('connection', function(socket) {
-  console.log('connection established');
-  var chatClient = new Client(socket);
-  chatters.push(chatClient);
-  console.log(chatClient.id);
 });
