@@ -30,6 +30,12 @@ ee.on('@all', function(client, string) {
   });
 });
 
+//@nickname
+ee.on('@nickname', function(client, string) {
+  client.nickname = string.trim();
+  client.socket.write(`${string} is your new nickname`);
+});
+
 ee.on('default', function(client, string) {
   client.socket.write('not a command\n');
 });
