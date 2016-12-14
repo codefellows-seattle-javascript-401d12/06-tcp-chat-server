@@ -15,8 +15,7 @@ ee.on('@dm', function(client, string) {
   let message = string.split(' ').slice(1).join(' ').trim();
 
   pool.forEach(c => {
-    // console.log('client:', c.nickname);
-    // console.log('nickname:', nickname);
+
     if (c.nickname === nickname) {
       c.socket.write(`${client.nickname}: ${message}`);
     }
@@ -47,7 +46,6 @@ server.on('connection', function(socket) {
 
   socket.on('data', function(data) {
     const command = data.toString().split(' ').shift().trim();
-    console.log('command:', command);
 
     if (command.startsWith('@')) {
       ee.emit(command, client, data.toString().split(' ').slice(1).join(' '));
@@ -55,6 +53,18 @@ server.on('connection', function(socket) {
     }
 
     ee.emit('default', client, data.toString());
+  });
+
+  //server error handling
+  socket.on('error', function(err) {
+    console.log(err);
+  });
+  
+  //server display client disconnected when closed
+  socket.on('close', function() {
+    pool.forEach(function(client) {
+      client.socket.write(`${client.nickname} is disconnected`);
+    });
   });
 });
 
