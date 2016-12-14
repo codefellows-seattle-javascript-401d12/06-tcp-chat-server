@@ -18,11 +18,16 @@ server.on('connection', function(socket){
   pool.push(client);
   console.log('successfully connected');
 
+  pool.forEach(c => {
+    c.socket.write(`${client.nickname} has entered the building\n`);
+  });
+
+
   socket.on('data', function(data){
     const command = data.toString().split(' ').shift().trim();
 
     if(command.startsWith('@')){
-      ee.emit(command,client,data.toString().split(' ').slice().join(' '));
+      ee.emit(command,client,data.toString().split(' ').slice(1).join(' '));
       return;
     }
 
@@ -34,23 +39,28 @@ server.on('connection', function(socket){
 
   });
 
-  socket.on('close', function(close){
-    if(close) server.close();
-    console.log('Connection Closed');
+  socket.on('close', function(){
+    pool.forEach(c => {
+      c.socket.write(`${client.nickname} has left the building\n`);
+    })
   });
 });
 
 ee.on('@dm', function(client, string){
-  let nickname = client.nickname;
+  let nicknameOrID = string.split(' ').shift().trim();
   let message = string.split(' ').slice(1).join(' ').trim();
 
-  console.log(`${client.nickname}: ${message}`);
-
   pool.forEach(c => {
-    if(c.nickname === nickname){
-    c.socket.write(`${client.nickname}: ${message}`);
-    }
+    if(c.nickname === nicknameOrID || c.id === nicknameOrID){
+      c.socket.write(`${client.nickname}: ${message}\n`);
+      }
+    });
   });
+ee.on('@exit', function(client){
+  pool.forEach((c,index) => {
+    if(c.id === client.id) pool.splice(index,1);
+  });
+  client.socket.end();
 });
 
 ee.on('@all', function(client,string){
@@ -60,11 +70,21 @@ ee.on('@all', function(client,string){
 });
 
 ee.on('@nickname', function(client,string){
-  var ogNickname = client.nickname;
-  client.nickname = string.split(' ').slice(1).join(' ').trim();
-  console.log(`${ogNickname} changed nickname to ${client.nickname}`);
+  var prevName = client.nickname;
+  client.nickname = string.split(' ').slice().join('_').trim();
+  client.socket.write(`${prevName} changed name to ${client.nickname}\n`);
 });
 
+ee.on('@me', function(client){
+  client.socket.write(`nickname: ${client.nickname}\nID: ${client.id}\n`);
+});
+
+
+ee.on('@people', function(client){
+  pool.forEach(c => {
+    client.socket.write(`nickname: ${c.nickname}\nID: ${c.id}\n`);
+  });
+})
 ee.on('Default', function(client, string){
   client.socket.write('not a command\n');
 });
