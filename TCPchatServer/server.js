@@ -91,8 +91,11 @@ ee.on('default', function(client, string) {
 server.on('connection', function(socket) {
   var client = new Client(socket);
   currentUsers.push(client);
-
   console.log('Chat is running');
+
+  socket.on('error', function(error) {
+    console.error(error);
+  });
 
   socket.on('data', function(data) {
     const command = data.toString().split(' ').shift().trim();
