@@ -106,6 +106,10 @@ server.on('connection', function(socket) {
     };
     ee.emit('default', client, data.toString());
   });
+  socket.on('close', function(close) {
+    socket.close();
+    console.log('socket closed');
+  })
 });
 
 // Server on listen --------------------------
