@@ -9,6 +9,30 @@ const ee = new EE();
 
 const pool = [];
 
+//@DM
+ee.on('@dm', function(client, string) {
+  let nickname = string.split(' ').shift().trim();
+  let message = string.split(' ').slice(1).join(' ').trim();
+
+  pool.forEach(c => {
+    // console.log('client:', c.nickname);
+    // console.log('nickname:', nickname);
+    if (c.nickname === nickname) {
+      c.socket.write(`${client.nickname}: ${message}`);
+    }
+  });
+});
+
+//@all
+ee.on('@all', function(client, string) {
+  pool.forEach( c => {
+    c.socket.write(`${client.nickname}:` + string);
+  });
+});
+
+ee.on('default', function(client, string) {
+  client.socket.write('not a command\n');
+});
 
 //server socket
 server.on('connection', function(socket) {
