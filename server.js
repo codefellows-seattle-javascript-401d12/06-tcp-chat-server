@@ -25,6 +25,12 @@ ee.on('@dm', function(client, input) {
   });
 });
 
+ee.on('@handle', function(client, input) {
+  console.log('handle setting request logged');
+  client.handle = input;
+  console.log(client.handle);
+});
+
 ee.on('@all', function(client, input) {
   console.log('broadcast message sent');
   chatters.forEach( chatter => {
@@ -33,7 +39,7 @@ ee.on('@all', function(client, input) {
 });
 
 ee.on('default', function(client, input) {
-  client.socket.write('keine Befehl gegeben\n');
+  client.socket.write('keinen Befehl gegeben\n');
 });
 
 server.on('connection', function(socket) {
