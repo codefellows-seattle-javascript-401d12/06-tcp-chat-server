@@ -29,23 +29,17 @@ ee.on('@all', function(client,string) {
   });
 });
 
-// TODO nickname
 ee.on('@nickname', function(client, string) {
   let newNickname = string.split(' ').shift().trim();
   client.nickname = newNickname;
   console.log('User entered new chosen name: ', newNickname);
   console.log(`User client.nickname is: ${client.nickname}`);
   console.log('User client.id is: ', client.id);
-});
-
-// TODO socket.destroy
-ee.on('@destroy', function() {
-  // this will automatically throw an error
-  // do we need to do anything more here?
+  client.socket.write(`Alright, your new username is ${client.nickname}\n`);
 });
 
 ee.on('default', function(client, string) {
-  client.socket.write('not a command\n');
+  client.socket.write(`Oops ${string} is not a valid command, we encourage you to try again.\n`);
 });
 
 server.on('connection', function(socket) {
@@ -53,6 +47,8 @@ server.on('connection', function(socket) {
   chatUsers.push(client);
 
   console.log('New client joined, client is: ', client.id);
+
+  client.socket.write('\n\nWelcome to our chat room. You can do a few things.\n\nTo create or change your username type \"@nickname <newUserName>\"\nTo chat with everbody type \"@all <your full message>\"\nTo send a private message type\"@dm @<recipient-name> <your full message>\"\n\n');
 
   socket.on('data', function(data) {
     const command = data.toString().split(' ').shift().trim();
@@ -67,10 +63,7 @@ server.on('connection', function(socket) {
 
   // TODO socket error
   socket.on('error', function(err) {
-    console.log('An error has occured', err);
-    // log the error to the server
-    // send to the terminal window acting as the server
-    // NOTE add @ command to trigger socket.destroy to throw an error
+    console.log('An error has occured, it is:', err);
   });
 
   socket.on('close', function() {
