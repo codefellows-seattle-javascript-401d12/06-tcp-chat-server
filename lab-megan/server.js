@@ -67,6 +67,7 @@ server.on('connection', function(socket) {
 
   // TODO socket error
   socket.on('error', function(err) {
+    console.log('An error has occured', err);
     // log the error to the server
     // send to the terminal window acting as the server
     // NOTE add @ command to trigger socket.destroy to throw an error
