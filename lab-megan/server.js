@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 const server = net.createServer();
 const ee = new EE();
 
-const pool = [];
+const chatUsers = [];
 
 ee.on('@dm', function(client, string) {
   let nickname = string.split(' ').shift().trim();
@@ -16,7 +16,7 @@ ee.on('@dm', function(client, string) {
   console.log('this is a DM, nickname is: ', nickname);
   console.log('this is a DM, message is: ', message);
 
-  pool.forEach(c => {
+  chatUsers.forEach(c => {
     if(c.nickname === nickname) {
       c.socket.write(`${client.nickname}: ${message}`);
     }
@@ -24,7 +24,7 @@ ee.on('@dm', function(client, string) {
 });
 
 ee.on('@all', function(client,string) {
-  pool.forEach (c => {
+  chatUsers.forEach (c => {
     c.socket.write(`${client.nickname}: ${string}`);
   });
 });
@@ -50,7 +50,7 @@ ee.on('default', function(client, string) {
 
 server.on('connection', function(socket) {
   var client = new Client(socket);
-  pool.push(client);
+  chatUsers.push(client);
 
   console.log('New client joined, client is: ', client.id);
 
@@ -72,11 +72,15 @@ server.on('connection', function(socket) {
     // NOTE add @ command to trigger socket.destroy to throw an error
   });
 
-  // TODO socket close
-  socket.on('close', function(closed) {
-    // remove the user nickname from the pool
-    // will I have access to the pool[i] number for that?
-    // let's find out
+  socket.on('close', function() {
+    console.log(chatUsers.indexOf(client));
+    var index = chatUsers.indexOf(client);
+    chatUsers.splice(index, index +1);
+    // console.log(`client nickname: ${client.nickname} has left the chat.`);
+    console.log(`client id: ${client.id} has left the chat.`);
+    chatUsers.forEach (c => {
+      c.socket.write(`${client.nickname} has left the chat.`);
+    });
   });
 
 });
