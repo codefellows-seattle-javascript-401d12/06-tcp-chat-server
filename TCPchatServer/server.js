@@ -48,7 +48,7 @@ ee.on('@exit', function(client) {
   if(currentUsers.length === 1) {
     currentUsers.forEach( c => {
       c.socket.write('Looks like everyone left but you.\n');
-    })
+    });
   }
 });
 
@@ -107,7 +107,7 @@ server.on('connection', function(socket) {
     if(command.startsWith('@')) {
       ee.emit(command, client, data.toString().split(' ').slice(1).join(' '));
       return;
-    };
+    }
     ee.emit('default', client, data.toString());
   });
   socket.on('end', function(end) {
