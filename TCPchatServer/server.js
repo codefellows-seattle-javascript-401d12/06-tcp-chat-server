@@ -20,7 +20,7 @@ ee.on('@dm', function(client, string) {
 
   currentUsers.forEach( c => {
     if(c.nickname === nickname) {
-      c.socket.write(`${client.nickname}: ${message}`);
+      c.socket.write(`${client.nickname}: ${message}\n`);
     }
   });
 });
@@ -28,7 +28,7 @@ ee.on('@dm', function(client, string) {
 // @all -------------------------------------------
 ee.on('@all', function(client, string) {
   currentUsers.forEach( c => {
-    c.socket.write(`${client.nickname}: ${string}`);
+    c.socket.write(`${client.nickname}: ${string}\n`);
   });
 });
 
@@ -36,18 +36,18 @@ ee.on('@all', function(client, string) {
 ee.on('@nickname', function(client, string) {
   client.nickname = string.trim();
 
-  client.socket.write(`${client.nickname} is your new nickname`);
+  client.socket.write(`${client.nickname} is your new nickname\n`);
 });
 
 // @exit ------------------------------------------
 ee.on('@exit', function(client) {
   currentUsers.forEach( c => {
-    c.socket.write(`${client.nickname} has left the room`);
+    c.socket.write(`${client.nickname} has left the room\n`);
   });
   client.socket.end();
   if(currentUsers.length === 1) {
     currentUsers.forEach( c => {
-      c.socket.write('Looks like everyone left but you.');
+      c.socket.write('Looks like everyone left but you.\n');
     })
   }
 });
@@ -93,6 +93,10 @@ server.on('connection', function(socket) {
   currentUsers.push(client);
   console.log('Chat is running');
 
+  currentUsers.forEach( c => {
+    c.socket.write(`${client.id} has joined the room\n`);
+  });
+
   socket.on('error', function(error) {
     console.error(error);
   });
@@ -106,10 +110,13 @@ server.on('connection', function(socket) {
     };
     ee.emit('default', client, data.toString());
   });
-  socket.on('close', function(close) {
-    socket.close();
+  socket.on('end', function(end) {
+    currentUsers.forEach( c => {
+      c.socket.write(`${client.nickname} has left the room\n`);
+    });
+    socket.end();
     console.log('socket closed');
-  })
+  });
 });
 
 // Server on listen --------------------------
