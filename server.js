@@ -12,50 +12,62 @@ const chatters = [];
 ee.on('@dm', function(client, input) {
   console.log('@dm logged');
   let handle = input.split(' ').shift().trim();
-  let directMessage = input.split(' ').slice(1).join(' ').trim();
-
-  console.log('handle:', handle);
-  console.log('message:', directMessage);
+  let directMessage = input.split(' ').slice(1).join(' ');
 
   chatters.forEach( chatter => {
     if (chatter.handle === handle) {
       console.log('data written');
       chatter.socket.write(`${client.handle}: ${directMessage}`);
-    }
+    };
   });
 });
 
 ee.on('@handle', function(client, input) {
   console.log('handle setting request logged');
-  client.handle = input;
-  console.log(client.handle);
+  client.handle = input.toString().split(' ').shift().trim();
 });
 
 ee.on('@all', function(client, input) {
   console.log('broadcast message sent');
   chatters.forEach( chatter => {
-    chatter.socket.write(`${client.handle}: ${input}`);
+    // broadcast message to all users EXCEPT for sender
+    if (chatter.handle != client.handle) {
+      chatter.socket.write(`${client.handle}: ${input}`);
+    };
   });
 });
 
 ee.on('default', function(client, input) {
+  // German for "no command given"
   client.socket.write('keinen Befehl gegeben\n');
+});
+
+ee.on('close', function(client) {
+  chatters.forEach( chatter => {
+    if (chatter.handle) {
+      chatter.socket.write(`${client.handle} has left the chat\n`);
+    };
+  });
 });
 
 server.on('connection', function(socket) {
   var chatClient = new Client(socket);
+  chatters.push(chatClient);
 
   socket.on('data', function(data) {
+    // Befehl is German for "Command"
     const befehl = data.toString().split(' ').shift().trim();
-
-    console.log(befehl);
 
     if (befehl.startsWith('@')) {
       ee.emit(befehl, chatClient, data.toString().split(' ').slice(1).join(' '));
-      console.log('ee emitted');
       return;
     }
     ee.emit('default', chatClient, data.toString());
+  });
+  socket.on('end', function() {
+    console.log(`user ${chatters[chatters.indexOf(chatClient)].handle} has left the chat`);
+    chatters.splice(chatters.indexOf(chatClient), 1);
+    ee.emit('close', chatClient);
   });
 });
 
