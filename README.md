@@ -9,6 +9,8 @@ Before local and remote users can chat, the NodeJS server needs to be running. O
 
 For the host computer to also be a chat user, a separate command line tab or window must be open and in the in the root directory of the chat app. For each new tab or window, type `telnet localhost 8000`. This will generate a new chat client with a randomly assigned name.
 
+Users on other computers in the local network may also join the chat. They will need to install the app and run `node server.js` and open a second tab or window as described above. In the second tab or window, instead of typing `telnet localhost 8000`, however, they will need to type `telnet hostIPAddress 8000`, where hostIPAddress is the IP address of the host computer (usually a string of numbers separated by period characters, e.g. '30.124.152.1').
+
 ### Commands
 * The command format `@handle myusername` will allow a user change their user handle, where 'myusername' is any name or string of characters the user chooses, as long as there are no spaces.
 * The command format `@dm username your message goes here` will allow a user to send a message directly to another user by their user handle, where 'username' is their user handle and 'your message goes here' is your message to that user.
