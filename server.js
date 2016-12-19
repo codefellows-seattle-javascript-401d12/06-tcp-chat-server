@@ -16,7 +16,6 @@ ee.on('@dm', function(client, input) {
 
   chatters.forEach( chatter => {
     if (chatter.handle === handle) {
-      console.log('data written');
       chatter.socket.write(`${client.handle}: ${directMessage}`);
     };
   });
@@ -65,7 +64,6 @@ server.on('connection', function(socket) {
     ee.emit('default', chatClient, data.toString());
   });
   socket.on('end', function() {
-    console.log(`user ${chatters[chatters.indexOf(chatClient)].handle} has left the chat`);
     chatters.splice(chatters.indexOf(chatClient), 1);
     ee.emit('close', chatClient);
   });
