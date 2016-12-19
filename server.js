@@ -49,6 +49,10 @@ ee.on('close', function(client) {
   });
 });
 
+ee.on('error', function(err) {
+  console.log(err);
+});
+
 server.on('connection', function(socket) {
   var chatClient = new Client(socket);
   chatters.push(chatClient);
@@ -63,9 +67,14 @@ server.on('connection', function(socket) {
     }
     ee.emit('default', chatClient, data.toString());
   });
+
   socket.on('end', function() {
     chatters.splice(chatters.indexOf(chatClient), 1);
     ee.emit('close', chatClient);
+  });
+
+  socket.on('error', function() {
+    ee.emit('error');
   });
 });
 
