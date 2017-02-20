@@ -4,11 +4,12 @@
 const net = require('net');
 // event emitter
 const EE = require('events');
-// 
+// importing the Client constructor
 const Client = require('./model/client.js');
 const PORT = process.env.PORT || 3000;
 // giving us access to the net module which allows use to use sockets (which contains a bunch of different methods)
 const server = net.createServer();
+// making an event emitter object
 const ee = new EE();
 //collecting client pool
 const pool = [];
@@ -77,6 +78,11 @@ server.on('connection', function(socket) {
     // data initially comes as a buffer, but we will convert into readable data.
     // trim: removes the whitespace from both sides.
     const command = data.toString().split(' ').shift().trim();
+    
+    // remove carriage return - returns the cursor to the beginning of the same line
+    // remove new line character - puts you on a new line
+    // shift() returns the first item of an array and returns that
+    // trim() removes whitespace from left and right side
 
     if (command.startsWith('@')) {
       // split makes it into an array and join turns it back to a string.
@@ -85,6 +91,13 @@ server.on('connection', function(socket) {
     }
     ee.emit('default', client, data.toString());
   });
+});
+
+ee.on('@exit', function(user) {
+  pool.forEach(function(client, index) {
+    if (client.id === user.id) pool.splice(index, 1);
+  });
+  user.socket.end();
 });
 
 //server is listening for a PORT to run on
