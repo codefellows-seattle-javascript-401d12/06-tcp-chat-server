@@ -19,7 +19,9 @@ ee.on('@dm', function(client, string) {
   console.log('message:', message);
 
   pool.forEach( c => {
+    //c is a client
     if (c.nickname === nickname) {
+      //
       c.socket.write(`${client.nickname}: ${message}:`);
     }
   });
@@ -34,6 +36,7 @@ ee.on('@nickname', function(client, data) {
 
 ee.on('@all', function(client, string) {
   pool.forEach( c => {
+    //writes back the client and the message.
     c.socket.write(`${client.nickname}: ${string}`);
   });
 });
@@ -65,12 +68,14 @@ server.on('connection', function(socket) {
     });
   });
 
+  // there's a network socket that emits some sort of data
   socket.on('data', function(data) {
     // data initially comes as a buffer, but we will convert into readable data.
     // trim: removes the whitespace from both sides.
     const command = data.toString().split(' ').shift().trim();
 
     if (command.startsWith('@')) {
+      // split makes it into an array and join turns it back to a string.
       ee.emit(command, client, data.toString().split(' ').slice(1).join(' '));
       return;
     }
@@ -78,6 +83,7 @@ server.on('connection', function(socket) {
   });
 });
 
+//server is listening for a PORT to run on
 server.listen(PORT, function() {
   console.log(`Server up on: ${PORT}`);
 });
