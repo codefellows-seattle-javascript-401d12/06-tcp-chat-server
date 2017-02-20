@@ -1,7 +1,10 @@
 'use strict';
 
+// accesses the tcp protocol to connect with the server.
 const net = require('net');
+// event emitter
 const EE = require('events');
+// 
 const Client = require('./model/client.js');
 const PORT = process.env.PORT || 3000;
 // giving us access to the net module which allows use to use sockets (which contains a bunch of different methods)
@@ -10,8 +13,9 @@ const ee = new EE();
 //collecting client pool
 const pool = [];
 
-// creating a custom event.
+// creating a custom event that gives us access to the newly made client, and the string(message they wrote)
 ee.on('@dm', function(client, string) {
+  // 
   let nickname = string.split(' ').shift().trim();
   let message = string.split(' ').slice(1).join(' ').trim();
 
@@ -21,8 +25,8 @@ ee.on('@dm', function(client, string) {
   pool.forEach( c => {
     //c is a client
     if (c.nickname === nickname) {
-      //
-      c.socket.write(`${client.nickname}: ${message}:`);
+      // gets client nickname and message
+      c.socket.write(`${client.nickname}: ${message}`);
     }
   });
 });
