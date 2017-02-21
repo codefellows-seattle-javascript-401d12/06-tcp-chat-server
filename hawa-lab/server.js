@@ -74,16 +74,14 @@ server.on('connection', function(socket) {
   });
 
   // there's a network socket that emits some sort of data
-  socket.on('data', function(data) {
-    // data initially comes as a buffer, but we will convert into readable data.
+   // data initially comes as a buffer, but we will convert into readable data.
     // trim: removes the whitespace from both sides.
-    const command = data.toString().split(' ').shift().trim();
-    
-    // remove carriage return - returns the cursor to the beginning of the same line
+   // remove carriage return - returns the cursor to the beginning of the same line
     // remove new line character - puts you on a new line
     // shift() returns the first item of an array and returns that
     // trim() removes whitespace from left and right side
-
+  socket.on('data', function(data) {
+    const command = data.toString().split(' ').shift().trim();
     if (command.startsWith('@')) {
       // split makes it into an array and join turns it back to a string.
       ee.emit(command, client, data.toString().split(' ').slice(1).join(' '));
